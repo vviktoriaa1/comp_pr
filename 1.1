@@ -1,0 +1,17 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+int main(){
+    double g=9.8;
+    double pi=3.14;
+    double T, V, a, x;
+    cout<<"введите T: "<<endl;
+    cin>>T;
+    cout<<"введите V: "<<endl;
+    cin>>V;
+    x=(g*T)/(2*V);
+    a=asin(x);
+    a=(a*180)/pi;
+    cout<<a;
+    return 0;
+}
