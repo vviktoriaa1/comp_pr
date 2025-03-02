@@ -1,0 +1,52 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+using namespace std;
+
+double example_function(double x) {
+    return x * x * x - 0.2 * x * x + 0.5 * x - 1;
+}
+
+
+double dichotomy_method(double (*f)(double), double a, double b, double epsilon, int& iter) {
+    if (f(a) * f(b) > 0) {
+        cerr << "Функция должна иметь разные знаки на концах интервала." << endl;
+        return 0; 
+    }
+
+    iter = 0;
+    while ((b - a) / 2 > epsilon) {
+        double c = (a + b) / 2;
+        iter++;
+
+        if (f(c) == 0) {
+            return c;
+        } else if (f(a) * f(c) < 0) {
+            b = c;
+        } else {
+            a = c;
+        }
+    }
+
+    return (a + b) / 2;
+}
+
+int main() {
+    double a = 0; 
+    double b = 3; 
+    double epsilon = 1e-10; 
+    int iter = 0;
+
+    double root = dichotomy_method(example_function, a, b, epsilon, iter);
+
+    if (isnan(root)) {
+        cout << "Количество итераций: " << iter << endl;
+        cout << "Решение уравнения: x = " << setprecision(10) << root << endl;
+        double fun = example_function(root);
+        cout << "Значение функции: f(" << root << ") = " << fun << endl;
+    } else {
+        cout << "Метод дихотомии не применим для данного интервала." << endl;
+    }
+
+    return 0;
+}
