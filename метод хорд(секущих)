@@ -1,0 +1,50 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+double example_function(double x) {
+    return x * x * x - 0.2 * x * x + 0.5 * x - 1;
+}
+
+double chord_method(double (*f)(double), double a, double b, double eps, int max_iter) {
+    int iteration = 0;
+    if (f(a) * f(b) >= 0) {
+        cerr << "Функция должна иметь разные знаки на концах интервала" << endl;
+        return 0;
+    }
+
+    double x = a - (b - a) * f(a) / (f(b) - f(a));
+    for (int i = 0; i < max_iter; ++i) {
+        if (abs(f(x)) < eps) {
+            break;
+        }
+
+        if (f(a) * f(x) < 0) {
+            b = x;
+        } else {
+            a = x;
+        }
+
+        x = a - (b - a) * f(a) / (f(b) - f(a));
+        iteration++;
+    }
+    cout << "Количество итераций: " << iteration << endl;
+    return x;
+}
+
+int main() {
+    double a = 0; 
+    double b = 3; 
+    double epsilon = 1e-6; 
+    int max_iter = 1000;
+
+    double root = chord_method(example_function, a, b, epsilon, max_iter);
+    if (isnan(root)) {
+        cout << "Корень уравнения: " << root << endl;
+        double fun = example_function(root);
+        cout << "Значение функции: f(" << root << ") = " << fun << endl;
+    } else {
+        cerr << "Корень не найден" << endl;
+    }
+
+    return 0;
+}
