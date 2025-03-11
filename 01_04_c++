@@ -1,0 +1,72 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+const double g = 9.81;  
+
+double y(double T, double V, double alpha, double H) {
+    return H + V * T * sin(alpha) - (g * T * T) / 2.0;
+}
+
+double dy(double T, double V, double alpha) {
+    return V * sin(alpha) - g * T;
+}
+
+double newtonMethod(double V, double alpha, double H, double initialGuess, double tolerance = 1e-6, int maxIterations = 100) {
+    double T = initialGuess;
+    for (int i = 0; i < maxIterations; ++i) {
+        double yVal = y(T, V, alpha, H);
+        double dyVal = dy(T, V, alpha);
+
+        if (dyVal == 0) {
+            cout << "Производная равна нулю. Метод Ньютона не может быть применен." << endl;
+            return -1;
+        }
+
+        double Tnew = T - yVal / dyVal;
+
+        if (abs(Tnew - T) < tolerance) {
+            return Tnew;
+        }
+
+        T = Tnew;
+    }
+
+    cout << "Метод Ньютона не сошелся за " << maxIterations << " итераций." << endl;
+    return -1;
+}
+
+int main() {
+    double V, alpha, H, t;
+
+    cout << "Введите начальную скорость V (в м/с): ";
+    cin >> V;
+    cout << "Введите угол alpha (в градусах): ";
+    cin >> alpha;
+    cout << "Введите высоту обрыва H (в метрах): ";
+    cin >> H;
+
+    double alphaRad = alpha * M_PI / 180.0;
+
+    double initialGuess = (V * sin(alphaRad)) / g;
+
+    double T = newtonMethod(V, alphaRad, H, initialGuess);
+
+    if (T != -1) {
+        cout << "Время полета T: " << T << " секунд" << endl;
+
+        cout << "Введите время t (в секундах): ";
+        cin >> t;
+
+        double x = V * t * cos(alphaRad);
+        double yVal = H + V * t * sin(alphaRad) - (g * t * t) / 2.0;
+
+        yVal = (yVal > 0) ? yVal : 0;
+
+        cout << "Горизонтальное расстояние x(t): " << x << " метров" << endl;
+        cout << "Высота от дна обрыва y(t): " << yVal << " метров" << endl;
+    }
+
+    return 0;
+}
