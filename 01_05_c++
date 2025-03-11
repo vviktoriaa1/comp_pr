@@ -1,0 +1,50 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+const double g = 9.81;  
+
+double calculateTime(double H) {
+    return sqrt(2 * H / g);
+}
+
+double calculateDistance(double U, double T) {
+    return U * T;
+}
+
+double secantMethod(double (*f)(double), double x0, double x1, double epsilon = 1e-6, int maxIterations = 100) {
+    double x2;
+    for (int i = 0; i < maxIterations; ++i) {
+        if (f(x1) - f(x0) == 0) {
+            cout << "Метод секущих не может быть применен: f(x1) - f(x0) = 0." << endl;
+            return -1;
+        }
+        x2 = x1 - f(x1) * (x1 - x0) / (f(x1) - f(x0));
+        if (abs(x2 - x1) < epsilon) {
+            return x2;
+        }
+        x0 = x1;
+        x1 = x2;
+    }
+    cout << "Метод секущих не сошелся за " << maxIterations << " итераций." << endl;
+    return -1;
+}
+
+int main() {
+    double H, U;
+
+    cout << "Введите высоту полета самолета H (в метрах): ";
+    cin >> H;
+    cout << "Введите скорость самолета U (в м/с): ";
+    cin >> U;
+
+    double T = calculateTime(H);
+
+    double S = calculateDistance(U, T);
+
+    cout << "Время полета бомбы T: " << T << " секунд" << endl;
+    cout << "Подлетное расстояние S: " << S << " метров" << endl;
+
+    return 0;
+}
