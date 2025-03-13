@@ -1,0 +1,66 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+// Функция для вычисления общего времени движения лодки
+double calculateTime(double S, double V, double U) {
+    double t1 = S / (V + U);  // Время по течению
+    double t2 = S / (V - U);  // Время против течения
+    return t1 + t2;  // Общее время
+}
+
+// Функция для метода Ньютона
+double newtonMethod(double S, double V, double U, double initialGuess, double tolerance = 1e-6, int maxIterations = 100) {
+    double T = initialGuess;
+    for (int i = 0; i < maxIterations; ++i) {
+        double f = calculateTime(S, V, U) - T;
+        double df = -1;  // Производная функции f(T) = calculateTime(S, V, U) - T
+
+        if (df == 0) {
+            cout << "Производная равна нулю. Метод Ньютона не может быть применен." << endl;
+            return -1;
+        }
+
+        double Tnew = T - f / df;
+
+        if (abs(Tnew - T) < tolerance) {
+            return Tnew;
+        }
+
+        T = Tnew;
+    }
+
+    cout << "Метод Ньютона не сошелся за " << maxIterations << " итераций." << endl;
+    return -1;
+}
+
+int main() {
+    double S, V, U;
+
+    // Ввод данных от пользователя
+    cout << "Введите расстояние между пунктами S (в метрах): ";
+    cin >> S;
+    cout << "Введите скорость лодки V (в м/с): ";
+    cin >> V;
+    cout << "Введите скорость течения реки U (в м/с): ";
+    cin >> U;
+
+    // Проверка корректности введенных данных
+    if (V <= U) {
+        cout << "Скорость лодки должна быть больше скорости течения реки." << endl;
+        return 1;
+    }
+
+    // Начальное предположение для времени движения лодки
+    double initialGuess = S / V;
+
+    // Вычисление общего времени движения лодки методом Ньютона
+    double T = newtonMethod(S, V, U, initialGuess);
+
+    if (T != -1) {
+        cout << "Общее время движения лодки T: " << T << " секунд" << endl;
+    }
+
+    return 0;
+}
