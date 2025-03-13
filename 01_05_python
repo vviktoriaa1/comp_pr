@@ -1,0 +1,38 @@
+import math
+g = 9.81
+def calculate_time(H):
+    return math.sqrt(2 * H / g)
+def calculate_distance(U, T):
+    return U * T
+def secant_method(f, x0, x1, epsilon=1e-6, max_iterations=100):
+    for i in range(max_iterations):
+        if f(x1) - f(x0) == 0:
+            print("Метод секущих не может быть применен: f(x1) - f(x0) = 0.")
+            return -1
+        x2 = x1 - f(x1) * (x1 - x0) / (f(x1) - f(x0))
+        if abs(x2 - x1) < epsilon:
+            return x2
+        x0 = x1
+        x1 = x2
+    print(f"Метод секущих не сошелся за {max_iterations} итераций.")
+    return -1
+
+# Основная функция
+def main():
+    # Ввод данных от пользователя
+    H = float(input("Введите высоту полета самолета H (в метрах): "))
+    U = float(input("Введите скорость самолета U (в м/с): "))
+
+    # Вычисление времени полета бомбы
+    T = calculate_time(H)
+
+    # Вычисление подлетного расстояния
+    S = calculate_distance(U, T)
+
+    # Вывод результатов
+    print(f"Время полета бомбы T: {T} секунд")
+    print(f"Подлетное расстояние S: {S} метров")
+
+# Запуск программы
+if __name__ == "__main__":
+    main()
