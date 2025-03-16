@@ -1,0 +1,38 @@
+def calculate_v2(V, S, t, V1):
+    return S / (2 * S / V - t)
+
+def dichotomie(V, S, t, a, b, epsilon):
+    V1 = S / t  # Вычисляем V1
+    V2_a = calculate_v2(V, S, t, a)
+    V2_b = calculate_v2(V, S, t, b)
+
+    while abs(V2_a - V2_b) > epsilon:
+        mid = (a + b) / 2
+        V2_mid = calculate_v2(V, S, t, mid)
+
+        if V2_mid * V2_a < 0:
+            b = mid
+            V2_b = V2_mid
+        else:
+            a = mid
+            V2_a = V2_mid
+
+    return (a + b) / 2
+
+def main():
+    V = float(input("Введите среднюю скорость V: "))
+    S = float(input("Введите расстояние S: "))
+    t = float(input("Введите время t: "))
+
+    V1 = S / t
+    print(f"Скорость V1: {V1}")
+
+    a = 0  # Начальная нижняя граница для V2
+    b = 2 * V  # Начальная верхняя граница для V2
+    epsilon = 1e-6  # Точность
+
+    V2 = dichotomie(V, S, t, a, b, epsilon)
+    print(f"Скорость V2: {V2}")
+
+if __name__ == "__main__":
+    main()
