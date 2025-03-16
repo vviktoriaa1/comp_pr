@@ -1,0 +1,46 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+// Константы
+const double G = 6.672e-11;  // Гравитационная постоянная (Нм^2/кг^2)
+const double M = 5.96e24;    // Масса Земли (кг)
+const double R = 6.37e6;     // Радиус Земли (м)
+
+// Функция для вычисления f(h)
+double f(double h, double g_target) {
+    return G * M / pow(R + h, 2) - g_target;
+}
+
+// Производная функции f(h)
+double df(double h) {
+    return -2 * G * M / pow(R + h, 3);
+}
+
+// Метод Ньютона для нахождения h
+double newtonMethod(double g_target, double initialGuess, double epsilon) {
+    double h = initialGuess;
+    double delta;
+
+    do {
+        delta = f(h, g_target) / df(h);
+        h -= delta;
+    } while (abs(delta) > epsilon);
+
+    return h;
+}
+
+int main() {
+    double g_target;
+    cout << "Введите целевое значение ускорения свободного падения g_target (м/с^2): ";
+    cin >> g_target;
+
+    double initialGuess = 0; // Начальное предположение для h
+    double epsilon = 1e-6; // Точность
+
+    double h = newtonMethod(g_target, initialGuess, epsilon);
+    cout << "Высота h, при которой ускорение свободного падения равно " << g_target << " м/с^2: " << h << " м" << endl;
+
+    return 0;
+}
