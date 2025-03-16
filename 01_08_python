@@ -1,0 +1,35 @@
+def calculate_S(V, t):
+    S1 = V * t
+    a = V / t
+    S2 = a * t**2 / 2
+    return S1 + S2
+
+def newton_method(V, t, initial_guess, epsilon):
+    S = initial_guess
+    delta = 0
+
+    while True:
+        f = S - (3 * V * t / 2)  # Уравнение для метода Ньютона
+        df = 1  # Производная функции f по S
+        delta = f / df
+        S -= delta
+        if abs(delta) < epsilon:
+            break
+
+    return S
+
+def main():
+    V = float(input("Введите скорость V: "))
+    t = float(input("Введите время t: "))
+
+    S_calculated = calculate_S(V, t)
+    print(f"Путь S, вычисленный по формуле: {S_calculated}")
+
+    initial_guess = S_calculated  # Начальное предположение
+    epsilon = 1e-6  # Точность
+
+    S_newton = newton_method(V, t, initial_guess, epsilon)
+    print(f"Путь S, вычисленный методом Ньютона: {S_newton}")
+
+if __name__ == "__main__":
+    main()
