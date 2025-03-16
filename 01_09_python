@@ -1,0 +1,37 @@
+import math
+
+# Функция для вычисления начальной фазы phi0
+def calculate_phi0(k):
+    return math.asin(1 / k)
+
+# Функция для вычисления времени T
+def calculate_T(omega, phi0):
+    return (math.pi / 2 - phi0) / omega
+
+# Функция для метода итераций
+def iteration_method(omega, k, initial_guess, epsilon):
+    T = initial_guess
+    delta = 0
+
+    while True:
+        phi0 = calculate_phi0(k)
+        new_T = calculate_T(omega, phi0)
+        delta = new_T - T
+        T = new_T
+        if abs(delta) < epsilon:
+            break
+
+    return T
+
+def main():
+    omega = float(input("Введите частоту omega: "))
+    k = float(input("Введите параметр k: "))
+
+    initial_guess = 0  # Начальное предположение
+    epsilon = 1e-6  # Точность
+
+    T = iteration_method(omega, k, initial_guess, epsilon)
+    print(f"Момент времени T, когда отклонение маятника максимально: {T}")
+
+if __name__ == "__main__":
+    main()
