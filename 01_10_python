@@ -1,0 +1,39 @@
+import math
+
+# Константы
+G = 6.672e-11  # Гравитационная постоянная (Нм^2/кг^2)
+M = 5.96e24    # Масса Земли (кг)
+R = 6.37e6     # Радиус Земли (м)
+
+# Функция для вычисления f(h)
+def f(h, g_target):
+    return G * M / (R + h)**2 - g_target
+
+# Производная функции f(h)
+def df(h):
+    return -2 * G * M / (R + h)**3
+
+# Метод Ньютона для нахождения h
+def newton_method(g_target, initial_guess, epsilon):
+    h = initial_guess
+    delta = 0
+
+    while True:
+        delta = f(h, g_target) / df(h)
+        h -= delta
+        if abs(delta) < epsilon:
+            break
+
+    return h
+
+def main():
+    g_target = float(input("Введите целевое значение ускорения свободного падения g_target (м/с^2): "))
+
+    initial_guess = 0  # Начальное предположение для h
+    epsilon = 1e-6      # Точность
+
+    h = newton_method(g_target, initial_guess, epsilon)
+    print(f"Высота h, при которой ускорение свободного падения равно {g_target} м/с^2: {h} м")
+
+if __name__ == "__main__":
+    main()
