@@ -1,0 +1,67 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Функция для интегрирования: x^alpha * ln(x)
+double func(double x, double alpha) {
+    if (x == 0) {
+        // Предел при x->0+: x^alpha * ln(x) -> 0 для alpha > 0
+        return 0.0;
+    }
+    return pow(x, alpha) * log(x);
+}
+
+// Метод трапеций
+double trapezoid(double (*f)(double, double), double a, double b, int n, double alpha) {
+    double h = (b - a) / n;
+    double sum = 0.5 * (f(a, alpha) + f(b, alpha));
+    
+    for (int i = 1; i < n; i++) {
+        double x = a + i * h;
+        sum += f(x, alpha);
+    }
+    
+    return sum * h;
+}
+
+// Адаптивный метод трапеций с заданной точностью
+double adaptive_trapezoid(double (*f)(double, double), double a, double b, double eps, double alpha) {
+    int n = 2; // Начальное количество разбиений
+    double prev = trapezoid(f, a, b, n, alpha);
+    n *= 2;
+    double curr = trapezoid(f, a, b, n, alpha);
+    
+    while (fabs(prev - curr) > eps) {
+        prev = curr;
+        n *= 2;
+        curr = trapezoid(f, a, b, n, alpha);
+        
+        // Защита от бесконечного цикла
+        if (n > 1000000) break;
+    }
+    
+    return curr;
+}
+
+int main() {
+    double a = 0.0, b = 1.0; // Пределы интегрирования
+    double alpha = 0.5;       // Параметр alpha (можно изменить)
+    double eps = 1e-6;        // Требуемая точность
+    
+    cout << "Вычисление интеграла ∫₀¹ x^α ln(x) dx методом трапеций" << endl;
+    cout << "Параметр α = " << alpha << endl;
+    cout << "Точность: " << eps << endl;
+    
+    double result = adaptive_trapezoid(func, a, b, eps, alpha);
+    
+    cout << "Результат: " << setprecision(10) << result << endl;
+    
+    // Аналитическое решение для проверки: -1/(alpha+1)^2
+    double exact = -1.0 / pow(alpha + 1, 2);
+    cout << "Точное значение: " << exact << endl;
+    cout << "Погрешность: " << fabs(result - exact) << endl;
+    
+    return 0;
+}
