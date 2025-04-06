@@ -1,0 +1,66 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Подынтегральная функция
+double f(double x) {
+    return 1.0 / (x * sqrt(3 * x * x - 2 * x - 1));
+}
+
+// Метод средних прямоугольников
+double rectangle_method(double (*func)(double), double a, double b, int n) {
+    double h = (b - a) / n;
+    double sum = 0.0;
+    
+    for (int i = 0; i < n; i++) {
+        double x = a + (i + 0.5) * h; // Средняя точка
+        sum += func(x);
+    }
+    
+    return sum * h;
+}
+
+// Адаптивный метод прямоугольников с заданной точностью
+double adaptive_rectangle(double (*func)(double), double a, double b, double eps) {
+    int n = 4; // Начальное количество разбиений
+    double prev_result = 0.0;
+    double result = rectangle_method(func, a, b, n);
+    
+    while (fabs(result - prev_result) > eps) {
+        prev_result = result;
+        n *= 2;
+        result = rectangle_method(func, a, b, n);
+        
+        // Защита от бесконечного цикла
+        if (n > 1000000) {
+            cout << "Достигнуто максимальное количество разбиений" << endl;
+            break;
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    double a = 1.0;
+    double b = 2.0;
+    double eps = 1e-6;
+    
+    // Проверка на особенность в точке x=1
+    double check_point = 1.0 + 1e-10;
+    if (isinf(f(check_point)) || isnan(f(check_point))) {
+        cout << "Внимание: подынтегральная функция имеет особенность в x=1" << endl;
+        a = check_point; // Сдвигаем нижний предел
+    }
+    
+    cout << "Вычисление интеграла ∫₁² 1/(x√(3x²-2x-1)) dx методом прямоугольников" << endl;
+    cout << "Точность: " << eps << endl;
+    
+    double result = adaptive_rectangle(f, a, b, eps);
+    
+    cout << "Приближенное значение: " << setprecision(8) << result << endl;
+    
+    return 0;
+}
