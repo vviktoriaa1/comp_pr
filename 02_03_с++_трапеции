@@ -1,0 +1,69 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Подынтегральная функция: (1/x²) * sin(1/x)
+double f(double x) {
+    double t = 1.0 / x;
+    return (1.0 / (x * x)) * sin(t);
+}
+
+// Метод трапеций для несобственного интеграла с переменным нижним пределом
+double trapezoid_infinite_integral(double (*func)(double), double a_func(double), double b, double eps) {
+    double integral = 0.0;
+    double prev_integral = 0.0;
+    int n = 4; // Начальное количество разбиений
+    
+    do {
+        prev_integral = integral;
+        integral = 0.0;
+        
+        // Определяем текущий нижний предел (зависит от x)
+        double a = a_func(b);
+        
+        double h = (b - a) / n;
+        
+        // Первая точка
+        double sum = 0.5 * (func(a) + func(b));
+        
+        // Промежуточные точки
+        for (int i = 1; i < n; i++) {
+            double x = a + i * h;
+            sum += func(x);
+        }
+        
+        integral = sum * h;
+        
+        // Увеличиваем верхний предел и количество разбиений
+        b *= 2;
+        n *= 2;
+        
+    } while (fabs(integral - prev_integral) > eps);
+    
+    return integral;
+}
+
+// Функция для вычисления нижнего предела (2/x)
+double lower_limit(double x) {
+    return 2.0 / x;
+}
+
+int main() {
+    double b_init = 10.0;    // Начальный верхний предел
+    double eps = 1e-6;       // Требуемая точность
+    
+    cout << "Вычисление интеграла ∫[2/x,∞] (1/x²)sin(1/x)dx методом трапеций" << endl;
+    cout << "Требуемая точность: " << eps << endl;
+    
+    double result = trapezoid_infinite_integral(f, lower_limit, b_init, eps);
+    
+    cout << "Приближенное значение: " << setprecision(8) << result << endl;
+    
+    // Аналитическое решение для проверки (если известно)
+    // cout << "Точное значение: " << exact_value << endl;
+    // cout << "Погрешность: " << fabs(result - exact_value) << endl;
+    
+    return 0;
+}
