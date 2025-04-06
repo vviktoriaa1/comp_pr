@@ -1,0 +1,57 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Подынтегральная функция: x² * e⁻ˣ
+double f(double x) {
+    return x * x * exp(-x);
+}
+
+// Метод Симпсона для бесконечного интеграла
+double simpson_infinite_integral(double (*func)(double), double a, double b_init, double eps) {
+    double integral = 0.0;
+    double prev_integral = 0.0;
+    int n = 4; // Начальное количество разбиений (должно быть четным)
+    
+    do {
+        prev_integral = integral;
+        integral = 0.0;
+        double h = (b_init - a) / n;
+        
+        // Суммируем по методу Симпсона
+        double sum = func(a) + func(b_init);
+        
+        for (int i = 1; i < n; i++) {
+            double x = a + i * h;
+            sum += (i % 2 == 0) ? 2 * func(x) : 4 * func(x);
+        }
+        
+        integral = sum * h / 3;
+        
+        // Увеличиваем верхний предел и количество разбиений
+        b_init *= 2;
+        n *= 2;
+        
+    } while (fabs(integral - prev_integral) > eps);
+    
+    return integral;
+}
+
+int main() {
+    double a = 0.0;          // Нижний предел
+    double b_init = 5.0;     // Начальный верхний предел
+    double eps = 1e-6;       // Требуемая точность
+    
+    cout << "Вычисление интеграла ∫[0,∞] x²e⁻ˣdx методом Симпсона" << endl;
+    cout << "Требуемая точность: " << eps << endl;
+    
+    double result = simpson_infinite_integral(f, a, b_init, eps);
+    
+    cout << "Приближенное значение: " << setprecision(8) << result << endl;
+    cout << "Точное значение: 2.0" << endl;
+    cout << "Погрешность: " << setprecision(8) << fabs(result - 2.0) << endl;
+    
+    return 0;
+}
