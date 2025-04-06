@@ -1,0 +1,55 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Функция для интегрирования: e^(-2x) * sin(2x)
+double f(double x) {
+    return exp(-2*x) * sin(2*x);
+}
+
+// Метод прямоугольников для бесконечного интеграла
+double rectangle_infinite_integral(double (*func)(double), double a, double b_init, double eps) {
+    double integral = 0.0;
+    double prev_integral = 0.0;
+    double b = b_init;
+    int n = 4; // Начальное количество разбиений
+    
+    do {
+        prev_integral = integral;
+        integral = 0.0;
+        double h = (b - a) / n;
+        
+        // Используем средние прямоугольники (frac = 0.5)
+        for (int i = 0; i < n; i++) {
+            double x = a + (i + 0.5) * h;
+            integral += func(x);
+        }
+        integral *= h;
+        
+        // Увеличиваем верхний предел и количество разбиений
+        b *= 2;
+        n *= 2;
+        
+    } while (fabs(integral - prev_integral) > eps);
+    
+    return integral;
+}
+
+int main() {
+    double a = 0.0;          // Нижний предел
+    double b_init = 1.0;      // Начальный верхний предел
+    double eps = 1e-6;        // Требуемая точность
+    
+    cout << "Вычисление интеграла ∫[0,∞] e^(-2x)sin(2x)dx методом прямоугольников" << endl;
+    cout << "Требуемая точность: " << eps << endl;
+    
+    double result = rectangle_infinite_integral(f, a, b_init, eps);
+    
+    cout << "Приближенное значение: " << setprecision(8) << result << endl;
+    cout << "Точное значение: 0.2" << endl;
+    cout << "Погрешность: " << setprecision(8) << fabs(result - 0.2) << endl;
+    
+    return 0;
+}
