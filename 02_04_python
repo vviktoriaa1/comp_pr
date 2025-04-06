@@ -1,0 +1,61 @@
+import math
+
+def integrand(x):
+    """Подынтегральная функция: x² * e⁻ˣ"""
+    return x**2 * math.exp(-x)
+
+def simpson_infinite_integral(func, a, b_init, eps=1e-6):
+    """
+    Вычисление бесконечного интеграла методом Симпсона
+    
+    Args:
+        func: подынтегральная функция
+        a: нижний предел
+        b_init: начальное значение верхнего предела
+        eps: требуемая точность
+        
+    Returns:
+        Приближенное значение интеграла
+    """
+    integral = 0.0
+    prev_integral = 0.0
+    n = 4  # Начальное количество разбиений (должно быть четным)
+    b = b_init
+    
+    while True:
+        prev_integral = integral
+        integral = 0.0
+        h = (b - a) / n
+        
+        # Суммируем по методу Симпсона
+        sum_val = func(a) + func(b)
+        
+        for i in range(1, n):
+            x = a + i * h
+            sum_val += 4 * func(x) if i % 2 == 1 else 2 * func(x)
+        
+        integral = sum_val * h / 3
+        
+        # Проверяем достижение точности
+        if abs(integral - prev_integral) < eps:
+            break
+            
+        # Увеличиваем верхний предел и количество разбиений
+        b *= 2
+        n *= 2
+    
+    return integral
+
+# Параметры вычисления
+a = 0.0          # Нижний предел
+b_init = 5.0     # Начальное значение верхнего предела
+tolerance = 1e-6 # Требуемая точность
+
+print("Вычисление интеграла ∫[0,∞] x²e⁻ˣdx методом Симпсона")
+print(f"Требуемая точность: {tolerance}")
+
+result = simpson_infinite_integral(integrand, a, b_init, tolerance)
+
+print(f"Приближенное значение: {result:.8f}")
+print("Точное значение: 2.0")
+print(f"Погрешность: {abs(result - 2.0):.8f}")
