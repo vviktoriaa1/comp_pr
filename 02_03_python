@@ -1,0 +1,66 @@
+import math
+
+def integrand(x):
+    """Подынтегральная функция: (1/x²) * sin(1/x)"""
+    t = 1 / x
+    return (1 / (x**2)) * math.sin(t)
+
+def trapezoid_infinite_integral(func, a_func, b_init, eps=1e-6):
+    """
+    Вычисление несобственного интеграла методом трапеций
+    с переменным нижним пределом
+    
+    Args:
+        func: подынтегральная функция
+        a_func: функция для вычисления нижнего предела (зависит от x)
+        b_init: начальное значение верхнего предела
+        eps: требуемая точность
+    
+    Returns:
+        Приближенное значение интеграла
+    """
+    integral = 0.0
+    prev_integral = 0.0
+    n = 4  # Начальное количество разбиений
+    b = b_init
+    
+    while True:
+        prev_integral = integral
+        integral = 0.0
+        
+        # Вычисляем текущий нижний предел
+        a = a_func(b)
+        h = (b - a) / n
+        
+        # Суммируем значения функции на концах и в промежуточных точках
+        sum_val = 0.5 * (func(a) + func(b))
+        for i in range(1, n):
+            x = a + i * h
+            sum_val += func(x)
+        
+        integral = sum_val * h
+        
+        # Проверяем достижение точности
+        if abs(integral - prev_integral) < eps:
+            break
+            
+        # Увеличиваем верхний предел и количество разбиений
+        b *= 2
+        n *= 2
+    
+    return integral
+
+def lower_limit(x):
+    """Функция для вычисления нижнего предела (2/x)"""
+    return 2 / x
+
+# Параметры вычисления
+b_initial = 10.0  # Начальное значение верхнего предела
+tolerance = 1e-6   # Требуемая точность
+
+print("Вычисление интеграла ∫[2/x,∞] (1/x²)sin(1/x)dx методом трапеций")
+print(f"Требуемая точность: {tolerance}")
+
+result = trapezoid_infinite_integral(integrand, lower_limit, b_initial, tolerance)
+
+print(f"Приближенное значение интеграла: {result:.8f}")
