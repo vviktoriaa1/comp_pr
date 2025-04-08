@@ -1,0 +1,61 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Подынтегральная функция
+double f(double x) {
+    return log(x) / (x * x);
+}
+
+// Метод Симпсона для заданного числа интервалов
+double simpson_integration(double a, double b, int n) {
+    if (n % 2 != 0) n++; // Убедимся, что n четное
+    double h = (b - a) / n;
+    double sum = f(a) + f(b);
+    
+    for (int i = 1; i < n; i++) {
+        double x = a + i * h;
+        sum += (i % 2 == 0) ? 2 * f(x) : 4 * f(x);
+    }
+    
+    return h * sum / 3;
+}
+
+// Адаптивный метод Симпсона с контролем точности
+double adaptive_simpson(double a, double b, double eps, int max_iter = 100) {
+    int n = 2;
+    double prev = simpson_integration(a, b, n);
+    double current;
+    
+    for (int iter = 0; iter < max_iter; iter++) {
+        n *= 2;
+        current = simpson_integration(a, b, n);
+        
+        if (fabs(current - prev) < eps) {
+            cout << "Достигнута точность за " << iter+1 << " итераций" << endl;
+            return current;
+        }
+        prev = current;
+    }
+    
+    cout << "Предупреждение: максимальное число итераций достигнуто" << endl;
+    return current;
+}
+
+int main() {
+    double a = 1.0;       // Нижний предел
+    double b = 10000.0;   // Верхний предел (аппроксимация бесконечности)
+    double eps = 1e-6;    // Требуемая точность
+    
+    cout << fixed << setprecision(8);
+    cout << "Вычисление интеграла (ln(x)/x^2) от " << a << " до " << b << endl;
+    
+    double result = adaptive_simpson(a, b, eps);
+    
+    cout << "Результат: " << result << endl;
+    cout << "Точность: " << eps << endl;
+    
+    return 0;
+}
