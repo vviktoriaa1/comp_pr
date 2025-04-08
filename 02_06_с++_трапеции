@@ -1,0 +1,52 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Подынтегральная функция
+double f(double x) {
+    return 1.0 / ((1.0 + x) * sqrt(x));
+}
+
+// Метод трапеций с адаптивным шагом
+double trapezoidal_integration(double a, double b, double eps) {
+    int n = 1; // Начальное число разбиений
+    double h = b - a;
+    double prev_integral = 0.5 * h * (f(a) + f(b)); // Первое приближение
+    double current_integral;
+
+    do {
+        n *= 2; // Удваиваем число разбиений
+        h /= 2; // Уменьшаем шаг в 2 раза
+        current_integral = 0.5 * prev_integral; // Копируем предыдущее значение
+
+        // Добавляем сумму значений функции в новых точках
+        for (int i = 1; i <= n - 1; i += 2) {
+            double x = a + i * h;
+            current_integral += h * f(x);
+        }
+
+        // Проверяем достижение точности
+        if (fabs(current_integral - prev_integral) < eps) {
+            break;
+        }
+
+        prev_integral = current_integral;
+    } while (true);
+
+    return current_integral;
+}
+
+int main() {
+    double a = 1.0; // Нижний предел
+    double b = 1e6;  // Верхний предел (аппроксимация бесконечности)
+    double eps = 1e-6; // Требуемая точность
+
+    double result = trapezoidal_integration(a, b, eps);
+
+    cout << "Значение интеграла: " << setprecision(10) << result << endl;
+    cout << "Точность: " << eps << endl;
+
+    return 0;
+}
