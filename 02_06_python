@@ -1,0 +1,40 @@
+import math
+
+def f(x):
+    return 1 / ((1 + x) * math.sqrt(x))
+
+def trapezoidal_integration(a, b, eps):
+    n = 1
+    h = b - a
+    prev_integral = 0.5 * h * (f(a) + f(b))
+    
+    while True:
+        n *= 2
+        h /= 2
+        current_integral = 0.5 * prev_integral
+        
+        # Добавляем сумму значений в новых точках
+        for i in range(1, n, 2):
+            x = a + i * h
+            current_integral += h * f(x)
+        
+        # Проверка точности
+        if abs(current_integral - prev_integral) < eps:
+            break
+            
+        prev_integral = current_integral
+    
+    return current_integral
+
+# Параметры интегрирования
+a = 1.0          # Нижний предел
+b = 1_000_000    # Верхний предел (аппроксимация бесконечности)
+eps = 1e-6       # Требуемая точность
+
+# Вычисление интеграла
+result = trapezoidal_integration(a, b, eps)
+
+# Вывод результатов
+print(f"Значение интеграла: {result:.8f}")
+print(f"Требуемая точность: {eps}")
+print(f"Число разбиений: {n}")  # n будет доступно, если вынести счетчик из функции
