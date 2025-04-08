@@ -1,0 +1,46 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Подынтегральная функция
+double f(double x) {
+    return log(x) / (x * x);
+}
+
+// Метод прямоугольников (срединных)
+double rectangle_integration(double a, double b, int n) {
+    double h = (b - a) / n;
+    double sum = 0.0;
+    
+    for (int i = 0; i < n; i++) {
+        double x = a + (i + 0.5) * h;  // Срединная точка
+        sum += f(x);
+    }
+    
+    return h * sum;
+}
+
+int main() {
+    double a = 1.0;      // Нижний предел
+    double b = 10000.0;  // Верхний предел (аппроксимация бесконечности)
+    double eps = 1e-6;   // Требуемая точность
+    int n = 100;         // Начальное число разбиений
+    double prev_result, current_result;
+    
+    // Адаптивный алгоритм для достижения точности
+    current_result = rectangle_integration(a, b, n);
+    do {
+        prev_result = current_result;
+        n *= 2;
+        current_result = rectangle_integration(a, b, n);
+    } while (fabs(current_result - prev_result) > eps);
+    
+    cout << fixed << setprecision(8);
+    cout << "Значение интеграла: " << current_result << endl;
+    cout << "Число разбиений: " << n << endl;
+    cout << "Точность: " << eps << endl;
+    
+    return 0;
+}
