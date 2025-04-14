@@ -1,0 +1,77 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Подынтегральная функция
+double f(double x) {
+    return 1.0 / (x*x - 4*x + 3);
+}
+
+// Метод прямоугольников (срединных точек)
+double rectangle_integration(double a, double b, int n) {
+    double h = (b - a) / n;
+    double sum = 0.0;
+    
+    for (int i = 0; i < n; i++) {
+        double x = a + (i + 0.5) * h;  // Срединная точка
+        sum += f(x);
+    }
+    
+    return h * sum;
+}
+
+// Адаптивный метод прямоугольников с контролем точности
+double adaptive_rectangle(double a, double b, double eps, int max_iter = 1000) {
+    int n = 10;  // Начальное число разбиений
+    double prev = rectangle_integration(a, b, n);
+    double current;
+    
+    for (int iter = 0; iter < max_iter; iter++) {
+        n *= 2;
+        current = rectangle_integration(a, b, n);
+        
+        // Проверка на расходимость
+        if (fabs(current) > 1e10) {
+            cout << "Интеграл расходится!" << endl;
+            return NAN;
+        }
+        
+        if (fabs(current - prev) < eps) {
+            cout << "Достигнута точность за " << iter+1 << " итераций" << endl;
+            return current;
+        }
+        prev = current;
+    }
+    
+    cout << "Предупреждение: максимальное число итераций достигнуто" << endl;
+    return current;
+}
+
+int main() {
+    const double a = 0.0;
+    const double b = 2.0;
+    const double eps = 1e-6;
+    
+    cout << "Вычисление интеграла 1/(x^2-4x+3) от " << a << " до " << b << endl;
+    cout << "Метод прямоугольников (срединных точек)" << endl;
+    
+    // Проверка на особенность внутри интервала
+    for (double x = a; x <= b; x += 0.01) {
+        if (fabs(x*x - 4*x + 3) < 1e-6) {
+            cout << "Внимание: подынтегральная функция имеет особенность в x = " << x << endl;
+            cout << "Интеграл расходится!" << endl;
+            return 1;
+        }
+    }
+    
+    double result = adaptive_rectangle(a, b, eps);
+    
+    if (!isnan(result)) {
+        cout << fixed << setprecision(8);
+        cout << "Численный результат: " << result << endl;
+    }
+    
+    return 0;
+}
