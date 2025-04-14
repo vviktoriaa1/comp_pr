@@ -1,0 +1,70 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Параметры задачи (a > 0)
+const double a = 2.0;
+const double b = 1.0;
+
+// Подынтегральная функция: e^(-a*x) * cos(b*x)
+double f(double x) {
+    return exp(-a * x) * cos(b * x);
+}
+
+// Метод трапеций
+double trapezoidal_integration(double from, double to, int n) {
+    double h = (to - from) / n;
+    double sum = 0.5 * (f(from) + f(to));
+    
+    for (int i = 1; i < n; i++) {
+        double x = from + i * h;
+        sum += f(x);
+    }
+    
+    return h * sum;
+}
+
+// Адаптивный метод трапеций с контролем точности
+double adaptive_trapezoidal(double from, double to, double eps, int max_iter = 100) {
+    int n = 1;
+    double prev = trapezoidal_integration(from, to, n);
+    double current;
+    
+    for (int iter = 0; iter < max_iter; iter++) {
+        n *= 2;
+        current = trapezoidal_integration(from, to, n);
+        
+        if (fabs(current - prev) < eps) {
+            cout << "Достигнута точность за " << iter+1 << " итераций" << endl;
+            return current;
+        }
+        prev = current;
+    }
+    
+    cout << "Предупреждение: максимальное число итераций достигнуто" << endl;
+    return current;
+}
+
+int main() {
+    double from = 0.0;          // Нижний предел
+    double to = 100.0;          // Верхний предел (аппроксимация бесконечности)
+    double eps = 1e-6;          // Требуемая точность
+    
+    cout << fixed << setprecision(8);
+    cout << "Вычисление интеграла e^(-" << a << "*x) * cos(" << b << "*x) от " 
+         << from << " до " << to << endl;
+    
+    double result = adaptive_trapezoidal(from, to, eps);
+    
+    cout << "Результат: " << result << endl;
+    cout << "Точность: " << eps << endl;
+    
+    // Аналитическое решение для проверки
+    double exact = a / (a*a + b*b);
+    cout << "Аналитическое решение: " << exact << endl;
+    cout << "Погрешность: " << fabs(result - exact) << endl;
+    
+    return 0;
+}
