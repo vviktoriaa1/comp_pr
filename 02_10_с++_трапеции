@@ -1,0 +1,88 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Подынтегральная функция
+double f(double x) {
+    return 1.0 / (x*x - 4*x + 3);
+}
+
+// Метод трапеций
+double trapezoidal_integration(double a, double b, int n) {
+    double h = (b - a) / n;
+    double sum = 0.5 * (f(a) + f(b));
+    
+    for (int i = 1; i < n; i++) {
+        double x = a + i * h;
+        sum += f(x);
+    }
+    
+    return h * sum;
+}
+
+// Адаптивный метод трапеций с контролем точности
+double adaptive_trapezoidal(double a, double b, double eps, int max_iter = 1000) {
+    int n = 10;  // Начальное число разбиений
+    double prev = trapezoidal_integration(a, b, n);
+    double current;
+    
+    for (int iter = 0; iter < max_iter; iter++) {
+        n *= 2;
+        current = trapezoidal_integration(a, b, n);
+        
+        // Проверка на расходимость (значение стремится к бесконечности)
+        if (fabs(current) > 1e10 || std::isinf(current)) {
+            cout << "Обнаружена расходимость интеграла!" << endl;
+            return NAN;
+        }
+        
+        if (fabs(current - prev) < eps) {
+            cout << "Достигнута точность за " << iter+1 << " итераций" << endl;
+            return current;
+        }
+        prev = current;
+    }
+    
+    cout << "Предупреждение: максимальное число итераций достигнуто" << endl;
+    return current;
+}
+
+int main() {
+    const double a = 0.0;
+    const double b = 2.0;
+    const double eps = 1e-6;
+    
+    cout << "Вычисление интеграла 1/(x^2-4x+3) от " << a << " до " << b << endl;
+    cout << "Метод трапеций с точностью " << eps << endl;
+    
+    // Проверка на особенность внутри интервала (полюс в x=1)
+    bool has_singularity = false;
+    for (double x = a; x <= b; x += 0.001) {
+        if (fabs(x*x - 4*x + 3) < 1e-6) {
+            cout << "Обнаружена особенность в точке x = " << x << endl;
+            has_singularity = true;
+            break;
+        }
+    }
+    
+    if (has_singularity) {
+        cout << "Интеграл расходится из-за особенности в промежутке интегрирования!" << endl;
+        return 1;
+    }
+    
+    double result = adaptive_trapezoidal(a, b, eps);
+    
+    if (!isnan(result)) {
+        cout << fixed << setprecision(8);
+        cout << "Численный результат: " << result << endl;
+        
+        // Аналитическое решение для сравнения
+        double exact_value = 0.5 * log(fabs((b-3)/(b-1) * (a-1)/(a-3)));
+        cout << "Аналитическое значение: " << exact_value << endl;
+        cout << "Разница: " << fabs(result - exact_value) << endl;
+    }
+    
+    return 0;
+}
