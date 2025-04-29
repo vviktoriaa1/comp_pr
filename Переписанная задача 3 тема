@@ -1,0 +1,37 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+// Функция для вычисления частичной суммы ряда Тейлора для sin(x)
+double func(double x, int n) {
+    double sum_f = 0;
+    double q = x;
+    for (int i = 0; i < n; i++) {
+        sum_f += q;
+        double p = (2.0 * i) * (2.0 * i + 1);
+        q *= (-1) * x * x / p;
+    }
+    return sum_f;
+}
+
+int main() {
+    // Ввод значения x в градусах
+    double x_deg;
+    cout << "Enter value in degree in x = ";
+    cin >> x_deg;
+    
+    // Преобразование градусов в радианы
+    double x = x_deg * M_PI / 180.0;
+    
+    // Ввод количества членов ряда
+    int n;
+    cout << "Enter number of terms n = ";
+    cin >> n;
+    
+    // Вызов функции и вывод результата
+    double s = func(x, n);
+    cout << "sum = " << s << endl;
+    
+    return 0;
+}
