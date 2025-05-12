@@ -1,0 +1,71 @@
+import math
+
+def term(x, n):
+    """Вычисляет n-й член степенного ряда"""
+    return (x + 8)**n / ((n + 1)**6 * 2**n)
+
+def calculate_sum(x, epsilon=1e-6, max_iter=1000000):
+    """Вычисляет сумму ряда с заданной точностью"""
+    total = 0.0
+    n = 0
+    
+    while True:
+        current_term = term(x, n)
+        total += current_term
+        n += 1
+        
+        if abs(current_term) < epsilon or n >= max_iter:
+            break
+    
+    return total
+
+def find_convergence_radius(epsilon=1e-6, step=0.1):
+    """Определяет радиус сходимости численным методом"""
+    center = -8.0  # Центр ряда
+    x = center
+    radius = 0.0
+    
+    while True:
+        x += step
+        try:
+            # Проверяем сходимость в текущей точке
+            sum_val = calculate_sum(x, epsilon)
+            
+            # Если сумма становится слишком большой или NaN
+            if math.isinf(sum_val) or math.isnan(sum_val):
+                radius = abs(x - center)
+                break
+            
+            # Практическое ограничение для поиска
+            if x > center + 20:
+                radius = math.inf
+                break
+                
+        except OverflowError:
+            radius = abs(x - center)
+            break
+    
+    return radius
+
+def main():
+    try:
+        x = float(input("Введите значение x: "))
+    except ValueError:
+        print("Ошибка: введите числовое значение")
+        return
+    
+    epsilon = 1e-6
+    series_sum = calculate_sum(x, epsilon)
+    radius = find_convergence_radius(epsilon)
+    
+    print("\nРезультаты вычислений:")
+    print(f"Сумма ряда при x = {x}: {series_sum:.8f}")
+    print(f"Радиус сходимости: {radius:.6f}")
+    
+    if radius != math.inf:
+        print(f"Область сходимости: ({center:.1f} - {radius:.2f}, {center:.1f} + {radius:.2f})")
+    else:
+        print("Ряд сходится для всех x")
+
+if __name__ == "__main__":
+    main()
