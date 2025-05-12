@@ -1,0 +1,53 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Функция вычисления факториала
+double factorial(int n) {
+    double result = 1.0;
+    for (int i = 1; i <= n; ++i) {
+        result *= i;
+    }
+    return result;
+}
+
+// Функция вычисления суммы ряда
+double calculate_series_sum(double x, double epsilon = 1e-6) {
+    double sum = 0.0;
+    double term;
+    int n = 0;
+    
+    do {
+        term = pow(2, n) * pow(x, n) / factorial(n);
+        sum += term;
+        n++;
+    } while (fabs(term) >= epsilon);
+    
+    return sum;
+}
+
+// Функция определения радиуса сходимости
+double find_convergence_radius() {
+    // Для данного ряда (экспоненциальный ряд) радиус сходимости бесконечен
+    return INFINITY;
+}
+
+int main() {
+    double x;
+    cout << "Enter x value: ";
+    cin >> x;
+    
+    const double eps = 1e-6;
+    double sum = calculate_series_sum(x, eps);
+    double radius = find_convergence_radius();
+    
+    cout << fixed << setprecision(8);
+    cout << "Series sum: " << sum << endl;
+    cout << "Theoretical value (e^(2x)): " << exp(2*x) << endl;
+    cout << "Convergence radius: " << radius << endl;
+    cout << "Terms used: " << n << endl;
+    
+    return 0;
+}
