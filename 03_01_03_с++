@@ -1,0 +1,41 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+double calculate_series_sum(double epsilon = 1e-6) {
+    double sum_total = 0.0;
+    int n = 0;
+    
+    while (true) {
+        // Первое слагаемое: 2 / 3^(n-1)
+        double term1 = 2.0 / pow(3, n - 1);
+        
+        // Второе слагаемое: (-1)^n / (3 * 2^n)
+        double term2 = pow(-1, n) / (3.0 * pow(2, n));
+        
+        double current_term = term1 + term2;
+        
+        // Проверка условия выхода
+        if (abs(current_term) < epsilon && n > 0) {
+            break;
+        }
+        
+        sum_total += current_term;
+        n++;
+    }
+    
+    return sum_total;
+}
+
+int main() {
+    const double epsilon = 1e-6;
+    double result = calculate_series_sum(epsilon);
+    
+    cout << fixed << setprecision(8);
+    cout << "Сумма ряда с точностью " << epsilon << ": " << result << endl;
+    cout << "Теоретическое значение: 9.22222222" << endl;
+    
+    return 0;
+}
