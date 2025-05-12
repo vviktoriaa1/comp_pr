@@ -1,0 +1,40 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+double calculate_series_sum(double epsilon = 1e-6) {
+    double sum = 0.0;
+    int n = 0;
+    
+    while (true) {
+        double numerator = pow(2, n) + pow(-1, n) * pow(3, n);
+        double denominator = pow(5, n);
+        double term = numerator / denominator;
+        
+        if (abs(term) < epsilon && n > 0) {
+            break;
+        }
+        
+        sum += term;
+        n++;
+    }
+    
+    return sum;
+}
+
+int main() {
+    const double epsilon = 1e-6;
+    double result = calculate_series_sum(epsilon);
+    
+    cout << fixed << setprecision(8);
+    cout << "Сумма ряда с точностью " << epsilon << ": " << result << endl;
+    cout << "Теоретическое значение: 2.29166667" << endl;
+    
+    // Вычисление погрешности
+    double error = abs(result - 2.29166667);
+    cout << "Фактическая погрешность: " << scientific << error << endl;
+    
+    return 0;
+}
