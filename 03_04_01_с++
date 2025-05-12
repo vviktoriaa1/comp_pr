@@ -1,0 +1,67 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+// Функция вычисления члена ряда
+double term(double x, int n) {
+    return pow(x + 8, n) / (pow(n + 1, 6) * pow(2, n));
+}
+
+// Функция вычисления суммы ряда с заданной точностью
+double calculate_sum(double x, double epsilon = 1e-6, int max_iter = 1000000) {
+    double sum = 0.0;
+    double current_term;
+    int n = 0;
+    
+    do {
+        current_term = term(x, n);
+        sum += current_term;
+        n++;
+    } while (fabs(current_term) >= epsilon && n < max_iter);
+    
+    return sum;
+}
+
+// Функция определения радиуса сходимости
+double find_convergence_radius(double epsilon = 1e-6) {
+    double r = 0.0;
+    double step = 0.1;
+    double x = -8.0; // Центр ряда в x = -8
+    
+    while (true) {
+        x += step;
+        double sum_prev = calculate_sum(x - step/2, epsilon);
+        double sum_next = calculate_sum(x + step/2, epsilon);
+        
+        if (isinf(sum_next) || isnan(sum_next)) {
+            r = x + 8; // Расстояние от центра до границы сходимости
+            break;
+        }
+        
+        if (x > 20.0) { // Практическое ограничение для поиска
+            r = INFINITY;
+            break;
+        }
+    }
+    
+    return r;
+}
+
+int main() {
+    double x;
+    cout << "Enter x value: ";
+    cin >> x;
+    
+    const double eps = 1e-6;
+    double sum = calculate_sum(x, eps);
+    
+    cout << fixed << setprecision(8);
+    cout << "Series sum: " << sum << endl;
+    
+    double radius = find_convergence_radius();
+    cout << "Convergence radius: " << radius << endl;
+    
+    return 0;
+}
