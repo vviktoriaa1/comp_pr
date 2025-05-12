@@ -1,0 +1,26 @@
+import math
+
+def sum_series(e):
+    s = 0.0
+    k = 1
+    
+    while True:
+        a = 3.0 / (2 ** (k - 1))
+        b = ((-1) ** (k - 1)) / (2.0 * (3 ** (k - 1)))
+        term = a + b
+        
+        if abs(term) < e:
+            break
+            
+        s += term
+        k += 1
+    
+    return s
+
+def main():
+    e = 1e-6
+    result = sum_series(e)
+    print(f"s = {result:.6f}")
+
+if __name__ == "__main__":
+    main()
