@@ -1,0 +1,64 @@
+import math
+
+def series_sum_basic(epsilon=1e-6):
+    """Базовая реализация вычисления суммы ряда"""
+    total = 0.0
+    n = 0
+    
+    while True:
+        term1 = 2.0 / (3 ** (n - 1))
+        term2 = ((-1) ** n) / (3.0 * (2 ** n))
+        current_term = term1 + term2
+        
+        if abs(current_term) < epsilon and n > 0:
+            break
+            
+        total += current_term
+        n += 1
+    
+    return total
+
+def series_sum_optimized(epsilon=1e-6):
+    """Оптимизированная реализация вычисления суммы ряда"""
+    total = 0.0
+    n = 0
+    term1 = 6.0    # 2/3^(-1) = 6
+    term2 = 1/3     # (-1)^0/(3*2^0) = 1/3
+    factor1 = 1/3   # Множитель для term1
+    factor2 = -0.5  # Множитель для term2
+    
+    while True:
+        current_term = term1 + term2
+        
+        if abs(current_term) < epsilon and n > 0:
+            break
+            
+        total += current_term
+        
+        # Обновляем слагаемые для следующей итерации
+        term1 *= factor1
+        term2 *= factor2
+        n += 1
+    
+    return total
+
+def main():
+    epsilon = 1e-6
+    
+    # Вычисление разными методами
+    result_basic = series_sum_basic(epsilon)
+    result_optimized = series_sum_optimized(epsilon)
+    
+    # Вывод результатов
+    print(f"Базовая реализация: {result_basic:.8f}")
+    print(f"Оптимизированная реализация: {result_optimized:.8f}")
+    print(f"Теоретическое значение: 9.22222222")
+    
+    # Сравнение точности
+    error_basic = abs(result_basic - 9.22222222)
+    error_optimized = abs(result_optimized - 9.22222222)
+    print(f"\nПогрешность базовой реализации: {error_basic:.2e}")
+    print(f"Погрешность оптимизированной: {error_optimized:.2e}")
+
+if __name__ == "__main__":
+    main()
