@@ -1,0 +1,33 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+double calculate_product(double epsilon = 1e-6) {
+    double product = 1.0;
+    int n = 2;
+    double prev_product;
+    
+    do {
+        prev_product = product;
+        double term = 1.0 - 1.0/(n*n);
+        product *= term;
+        n++;
+    } while (fabs(product - prev_product) >= epsilon);
+    
+    return product;
+}
+
+int main() {
+    const double eps = 1e-6;
+    double result = calculate_product(eps);
+    
+    cout << fixed << setprecision(8);
+    cout << "Product value: " << result << endl;
+    cout << "Theoretical value: 0.50000000" << endl;
+    cout << "Iterations: " << n-2 << endl;
+    cout << "Precision achieved: " << scientific << eps << endl;
+    
+    return 0;
+}
