@@ -1,0 +1,25 @@
+import math
+
+def p(e=1e-6):
+    r = 1.0
+    n = 2
+    p = r
+    
+    while True:
+        p = r
+        t = 1 - 1/(n**2)
+        r *= t
+        if abs(r - p) < e:
+            break
+        n += 1
+    
+    return r
+
+if __name__ == "__main__":
+    e = 1e-6
+    v = p(e)
+    
+    print(f"P: {v:.8f}")
+    print("T: 0.50000000")
+    print(f"N: {n-2}")
+    print(f"E: {e:.1e}")
