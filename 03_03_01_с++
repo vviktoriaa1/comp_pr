@@ -1,0 +1,42 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+double calculate_sum(double x, double epsilon = 1e-6) {
+    double sum = 0.0;
+    int n = 1;
+    double term;
+    
+    while (true) {
+        term = pow(-1, n) / (sin(n * x) + 1 + n * n);
+        if (fabs(term) < epsilon) break;
+        sum += term;
+        n++;
+        
+        // Защита от бесконечного цикла
+        if (n > 1000000) {
+            cout << "Warning: Possible divergence or slow convergence" << endl;
+            break;
+        }
+    }
+    
+    return sum;
+}
+
+int main() {
+    double x;
+    cout << "Enter x value: ";
+    cin >> x;
+    
+    const double eps = 1e-6;
+    double result = calculate_sum(x, eps);
+    
+    cout << fixed << setprecision(8);
+    cout << "Sum: " << result << endl;
+    cout << "Precision: " << scientific << eps << endl;
+    cout << "Terms used: " << n-1 << endl;
+    
+    return 0;
+}
