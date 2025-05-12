@@ -1,0 +1,47 @@
+import math
+
+def factorial(n):
+    """Вычисляет факториал числа n"""
+    return math.factorial(n) if n >= 0 else 1
+
+def series_sum(x, epsilon=1e-6, max_terms=1000):
+    """Вычисляет сумму ряда с заданной точностью"""
+    total = 0.0
+    n = 0
+    
+    while True:
+        term = (2**n * x**n) / factorial(n)
+        total += term
+        n += 1
+        
+        # Условия выхода из цикла
+        if abs(term) < epsilon or n >= max_terms:
+            break
+    
+    return total, n
+
+def main():
+    try:
+        x = float(input("Введите значение x: "))
+    except ValueError:
+        print("Ошибка: введите числовое значение")
+        return
+    
+    epsilon = 1e-6
+    sum_result, terms_used = series_sum(x, epsilon)
+    
+    # Теоретическое значение (e^(2x))
+    theoretical = math.exp(2*x)
+    
+    print("\nРезультаты вычислений:")
+    print(f"Вычисленная сумма ряда: {sum_result:.8f}")
+    print(f"Теоретическое значение (e^(2x)): {theoretical:.8f}")
+    print(f"Использовано членов ряда: {terms_used}")
+    print(f"Радиус сходимости: ∞ (ряд сходится для всех x)")
+    
+    # Вычисление погрешности
+    error = abs(sum_result - theoretical)
+    print(f"Фактическая погрешность: {error:.2e}")
+
+if __name__ == "__main__":
+    main()
