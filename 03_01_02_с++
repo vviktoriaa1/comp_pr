@@ -1,0 +1,34 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+double sum(double eps) {
+    double s = 0.0;
+    int n = 1;
+    
+    while (true) {
+        double term = (pow(2, n) + cos(M_PI * n)) / pow(3, n);
+        
+        if (fabs(term) < eps) break;
+        
+        s += term;
+        n++;
+    }
+    
+    return s;
+}
+
+int main() {
+    const double eps = 1e-6;
+    double result = sum(eps);
+    
+    cout << fixed << setprecision(6);
+    cout << "Sum = " << result << endl;
+    
+    // Теоретическое значение для проверки
+    cout << "Theoretical value = 1.75" << endl;
+    
+    return 0;
+}
