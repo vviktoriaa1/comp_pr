@@ -1,0 +1,39 @@
+import math
+
+def calculate_series_sum(epsilon=1e-6):
+    """
+    Вычисляет сумму ряда с точностью до epsilon
+    Сумма ряда: sum_{n=1}^∞ (2^n + cos(πn)) / 3^n
+    """
+    sum_total = 0.0
+    n = 1
+    
+    while True:
+        numerator = 2**n + math.cos(math.pi * n)
+        term = numerator / (3**n)
+        
+        if abs(term) < epsilon:
+            break
+            
+        sum_total += term
+        n += 1
+    
+    return sum_total
+
+def main():
+    # Точность вычислений
+    precision = 1e-6
+    
+    # Вычисление суммы ряда
+    series_sum = calculate_series_sum(precision)
+    
+    # Вывод результата
+    print(f"Сумма ряда с точностью {precision}: {series_sum:.8f}")
+    print("Теоретическое значение: 1.75000000")
+    
+    # Проверка точности
+    error = abs(series_sum - 1.75)
+    print(f"Фактическая погрешность: {error:.2e}")
+
+if __name__ == "__main__":
+    main()
